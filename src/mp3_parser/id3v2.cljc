@@ -11,13 +11,13 @@
 (defn unsynchsafe
   [ss]
   (loop [out 0 mask 0x7F000000]
-    (if (> mask 0)
+    (if (> mask 0) ; TODO use pos?
       (recur (bit-or (bit-shift-right out 1) (bit-and ss mask)) (bit-shift-right mask 8))
       out)))
 
 (defn is-kth-bit-set
   [n k]
-  (if (> (bit-and n (bit-shift-left 1 (- k 1))) 0)
+  (if (> (bit-and n (bit-shift-left 1 (- k 1))) 0) ; TODO use pos?
     true
     false))
 
@@ -32,3 +32,8 @@
         (+ id3v2-header-length unsynchsafe footer)
         (+ id3v2-header-length unsynchsafe)))
     0))
+
+(defn parse
+  [buf]
+  (let [parsed (o/read buf spec)]
+    {::offset (offset parsed)}))
