@@ -12,8 +12,8 @@
     (doseq [fixture fixtures]
       (let [parsed (p/parse (:file fixture))]
         (are [f p] (= f p)
-          (:id3v2-offset fixture) (::id3v2/offset parsed)
-          (:xing-tag? fixture) (::xing/tag? parsed)
-          (:xing-keyword fixture) (::xing/keyword parsed)
-          (:lame-tag? fixture) (::lame/tag? parsed)
-          (:lame-encoder fixture) (::lame/encoder parsed))))))
+          (:id3v2-offset fixture) (:id3v2-offset parsed)
+          (:xing-tag? fixture) (:xing-tag? parsed)
+          (:xing-keyword fixture) (get-in parsed [:xing ::xing/keyword])
+          (:lame-tag? fixture) (:lame-tag? parsed)
+          (:lame-encoder fixture) (get-in parsed [:lame ::lame/encoder]))))))

@@ -25,20 +25,21 @@
   (bit-shift-right rev-method 4))
 
 (defn parse
-  [buf xing-parsed]
-  (if (not (::xing/tag? xing-parsed))
+  [buf {{::mpeg/keys [frame-length]} :mpeg {::xing/keys [offset]} :xing :as xing-parsed}]
+  (if (not (:xing-tag? xing-parsed))
     xing-parsed
     (do
       (assert (>= (o/get-capacity buf) (+
-                                        (::id3v2/offset xing-parsed)
-                                        (::mpeg/frame-length xing-parsed)))
-              (str "Buffer size " (o/get-capacity buf) " insufficient for frame length " (::mpeg/frame-length xing-parsed)))
-      (let [parsed (o/read buf spec {:offset (+ (::xing/offset xing-parsed) 120)})
+                                        (:id3v2-offset xing-parsed)
+                                        frame-length))
+              (str "Buffer size " (o/get-capacity buf) " insufficient for frame length " frame-length))
+      (let [parsed (o/read buf spec {:offset (+ offset 120)})
             revision (revision (:rev-method parsed))
             tag? (if (or (= revision 0) (= revision 1) (= revision 15)) true false)
-            lame-parsed (assoc xing-parsed ::tag? tag?)]
+            lame-parsed (assoc xing-parsed :lame-tag? tag?)]
         (if (not tag?)
           lame-parsed
-          (assoc lame-parsed
-                 ::encoder (:encoder parsed)
-                 ::revision revision))))))
+          (assoc lame-parsed :lame
+                 (assoc (:lame lame-parsed)
+                        ::encoder (:encoder parsed)
+                        ::revision revision)))))))

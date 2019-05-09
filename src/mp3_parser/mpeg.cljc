@@ -1,6 +1,7 @@
 (ns mp3-parser.mpeg
   (:require
    [mp3-parser.id3v2 :as id3v2]
+   [mp3-parser.map :as map]
    [octet.core :as o]))
 
 ; the mpeg frame header spec
@@ -31,19 +32,19 @@
           :else 0)))
 
 (defn has-padding
-  [{::keys [header] :as mpeg-parsed}]
-  (assoc mpeg-parsed
-         ::has-padding?
-         (= (bit-shift-right (bit-and (header 2) 0x02) 1)
-            0x01)))
+  [{{::keys [header]} :mpeg :as mpeg-parsed}]
+  (assoc-in mpeg-parsed
+            [:mpeg ::has-padding?]
+            (= (bit-shift-right (bit-and (header 2) 0x02) 1)
+               0x01)))
 
 (defn num-channels
-  [{::keys [header] :as mpeg-parsed}]
+  [{{::keys [header]} :mpeg :as mpeg-parsed}]
   (let [channel-bits (bit-shift-right (header 3) 6)
         channels (if (= (bit-and channel-bits 0x03) 0x03)
                    1
                    2)]
-    (assoc mpeg-parsed ::num-channels channels)))
+    (assoc-in mpeg-parsed [:mpeg ::num-channels] channels)))
 
 (def bit-rates
   {1 {1 [0 32 64 96 128 160 192 224 256 288 320 352 384 416 448 0]
@@ -56,20 +57,20 @@
       4 [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]}})
 
 (defn bit-rate
-  [{::keys [header version layer] :as mpeg-parsed}]
-  (assoc mpeg-parsed
-         ::bit-rate
-         (*
-          (get-in bit-rates [version layer (bit-and (bit-shift-right (header 2) 4) 0x0F)])
-          1000)))
+  [{{::keys [header version layer]} :mpeg :as mpeg-parsed}]
+  (assoc-in mpeg-parsed
+            [:mpeg ::bit-rate]
+            (*
+             (get-in bit-rates [version layer (bit-and (bit-shift-right (header 2) 4) 0x0F)])
+             1000)))
 
 (def sample-rates {1 [44100 48000 32000 0]
                    2 [22050 24000 16000 0]})
 
 (defn sample-rate
-  [{::keys [header version] :as mpeg-parsed}]
-  (assoc mpeg-parsed
-         ::sample-rate
+  [{{::keys [header version]} :mpeg :as mpeg-parsed}]
+  (assoc-in mpeg-parsed
+         [:mpeg ::sample-rate]
          (get-in sample-rates [version (bit-and (bit-shift-right (header 2) 2) 0x03)])))
 
 (def samples-per-frame
@@ -83,38 +84,37 @@
       3 576}})
 
 (defn num-samples
-  [{::keys [version layer] :as mpeg-parsed}]
-  (assoc mpeg-parsed
-         ::num-samples
+  [{{::keys [version layer]} :mpeg :as mpeg-parsed}]
+  (assoc-in mpeg-parsed
+         [:mpeg ::num-samples]
          (get-in samples-per-frame [version layer])))
 
 (defn frame-length
-  [{::keys [has-padding? bit-rate sample-rate num-samples frame-length] :as mpeg-parsed}]
+  [{{::keys [has-padding? bit-rate sample-rate num-samples frame-length]} :mpeg :as mpeg-parsed}]
   (let [padding (if has-padding? 1 0)
         length (if (= sample-rate 0)
                  0
                  (if (= layer 1)
                    (* (Math/floor (+ (* 12.0 (/ bit-rate sample-rate)) padding)) 4)
                    (+ (Math/floor (* (/ (/ bit-rate 8) sample-rate) num-samples)) padding)))]
-    (assoc mpeg-parsed ::frame-length length)))
+    (assoc-in mpeg-parsed [:mpeg ::frame-length] length)))
 
 (defn parse
   [buf id3v2-parsed]
-  (assert (>= (o/get-capacity buf) (+ (::id3v2/offset id3v2-parsed) 4))
-          (str "Buffer size " (o/get-capacity buf) " insufficient for id3v2 offset " (::id3v2/offset id3v2-parsed) " and frame header length 4"))
-  (let [header (o/read buf spec {:offset (::id3v2/offset id3v2-parsed)}
-                       )
+  (assert (>= (o/get-capacity buf) (+ (:id3v2-offset id3v2-parsed) 4))
+          (str "Buffer size " (o/get-capacity buf) " insufficient for id3v2 offset " (:id3v2-offset id3v2-parsed) " and frame header length 4"))
+  (let [header (o/read buf spec {:offset (:id3v2-offset id3v2-parsed)})
         valid? (valid? header)
-        mpeg-parsed (assoc id3v2-parsed
-                           ::valid? valid?
-                           ::header header)]
+        mpeg-parsed (assoc id3v2-parsed :mpeg-valid? valid?)]
     (if (not valid?)
       mpeg-parsed
       (let [version (version header)
             layer (layer header)
-            mpeg-parsed-version-layer (assoc mpeg-parsed
-                                             ::version version
-                                             ::layer layer)]
+            mpeg-parsed-version-layer (assoc mpeg-parsed :mpeg
+                                             (assoc (::mpeg mpeg-parsed)
+                                                    ::header header
+                                                    ::version version
+                                                    ::layer layer))]
         (if (and (pos? version) (pos? layer))
           (-> mpeg-parsed-version-layer
               has-padding

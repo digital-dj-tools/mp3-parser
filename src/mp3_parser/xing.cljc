@@ -14,22 +14,23 @@
       2 17}})
 
 (defn parse
-  [buf mpeg-parsed]
-  (if (not (::mpeg/valid? mpeg-parsed))
+  [buf {{::mpeg/keys [header version num-channels frame-length]} :mpeg :as mpeg-parsed}]
+  (if (not (:mpeg-valid? mpeg-parsed))
     mpeg-parsed
     (do
       (assert (>= (o/get-capacity buf) (+
-                                   (::id3v2/offset mpeg-parsed)
-                                   (::mpeg/frame-length mpeg-parsed)))
-              (str "Buffer size " (o/get-capacity buf) " insufficient for frame length " (::mpeg/frame-length mpeg-parsed)))
-      (let [offset (+ (::id3v2/offset mpeg-parsed)
-                      (count (::mpeg/header mpeg-parsed))
-                      (get-in offsets [(::mpeg/version mpeg-parsed) (::mpeg/num-channels mpeg-parsed)]))
+                                        (:id3v2-offset mpeg-parsed)
+                                        frame-length))
+              (str "Buffer size " (o/get-capacity buf) " insufficient for frame length " frame-length))
+      (let [offset (+ (:id3v2-offset mpeg-parsed)
+                      (count header)
+                      (get-in offsets [version num-channels]))
             parsed (o/read buf spec {:offset offset})
             tag? (if (or (= (:keyword parsed) "Xing") (= (:keyword parsed) "Info")) true false)
-            xing-parsed (assoc mpeg-parsed ::tag? tag?)]
+            xing-parsed (assoc mpeg-parsed :xing-tag? tag?)]
         (if (not tag?)
           xing-parsed
-          (assoc xing-parsed
-                 ::keyword (:keyword parsed)
-                 ::offset offset))))))
+          (assoc xing-parsed :xing
+                 (assoc (:xing xing-parsed)
+                        ::keyword (:keyword parsed)
+                        ::offset offset)))))))

@@ -36,4 +36,4 @@
 (defn parse
   [buf]
   (let [parsed (o/read buf spec)]
-    {::offset (offset parsed)}))
+    {:id3v2-offset (offset parsed)}))
