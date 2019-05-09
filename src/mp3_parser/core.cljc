@@ -2,6 +2,7 @@
   (:require 
    [mp3-parser.id3v2 :as id3v2]
    [mp3-parser.mpeg :as mpeg]
+   [mp3-parser.lame :as lame]
    [mp3-parser.xing :as xing]
    [octet.core :as o]
    #?(:clj [clojure.java.io :as io])
@@ -18,6 +19,7 @@
        id3v2/parse
        (mpeg/parse buf)
        (xing/parse buf)
+       (lame/parse buf)
        (into (sorted-map))))
 
 ; TODO async version w/core async

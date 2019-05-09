@@ -1,6 +1,12 @@
 [{:file "test-resources/mp3-cbr-stereo-44100khz-192kbps.mp3"
   :id3v2-offset 0
-  :xing-tag? true}
+  :xing-tag? true
+  :xing-keyword "Info"
+  :lame-tag? true
+  :lame-encoder "LAME3.99r"}
  {:file "test-resources/mp3-cbr-stereo-44100khz-192kbps-id3v2.mp3"
   :id3v2-offset 42005
-  :xing-tag? true}]
+  :xing-tag? true
+  :xing-keyword "Info"
+  :lame-tag? true
+  :lame-encoder "LAME3.99r"}]
