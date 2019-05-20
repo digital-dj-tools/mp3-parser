@@ -1,0 +1,20 @@
+{
+  "name": "mp3-parser",
+  "description": "",
+  "bin": "out/cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pkg . --targets node8-win-x64,node8-macos-x64,node8-linux-x64 --out-path pkg"
+  },
+  "keywords": [],
+  "author": "",
+  "devDependencies": {
+    "pkg": "~4.3.4"
+  },
+  "pkg": {
+    "scripts": "out/**/*.js"
+  },
+  "dependencies": {
+    "source-map-support": "^0.5.9"
+  }
+}
