@@ -20,3 +20,48 @@ jobs:
     displayName: Install Node Dependencies
   - script: clojure -Adev:test-cljs
     displayName: ClojureScript Tests
+  - script: |
+      clojure -A:dev:compile-cljs
+      npm run build
+    displayName: Package
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: mp3-parser
+      targetPath: pkg
+- job: Test_Windows
+  dependsOn: Build
+  pool:
+    vmImage: win1803
+  steps:
+  - task: DownloadPipelineArtifact@0
+    inputs:
+      artifactName: mp3-parser
+      targetPath: $(System.DefaultWorkingDirectory)\pkg
+  - script: pkg\mp3-parser-win.exe -h
+    displayName: Smoke Test
+- job: Test_Mac
+  dependsOn: Build
+  pool:
+    vmImage: macOS-10.13
+  steps:
+  - task: DownloadPipelineArtifact@0
+    inputs:
+      artifactName: mp3-parser
+      targetPath: $(System.DefaultWorkingDirectory)/pkg
+  - script: |
+      chmod +x pkg/mp3-parser-macos
+      pkg/mp3-parser-macos -h
+    displayName: Smoke Test
+- job: Test_Linux
+  dependsOn: Build
+  pool:
+    vmImage: ubuntu-16.04
+  steps:
+  - task: DownloadPipelineArtifact@0
+    inputs:
+      artifactName: mp3-parser
+      targetPath: $(System.DefaultWorkingDirectory)/pkg
+  - script: |
+      chmod +x pkg/mp3-parser-linux
+      pkg/mp3-parser-linux -h
+    displayName: Smoke Test
