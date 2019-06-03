@@ -24,19 +24,27 @@ jobs:
       clojure -A:dev:compile-cljs
       npm run build
     displayName: Package
-  - task: PublishPipelineArtifact@0
+  - task: CopyFiles@2
     inputs:
-      artifactName: mp3-parser
-      targetPath: pkg
+      SourceFolder: pkg
+      Contents: '**'
+      TargetFolder: $(Build.ArtifactStagingDirectory)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: $(Build.ArtifactStagingDirectory)
+      ArtifactName: mp3-parser
+      publishLocation: Container
 - job: Test_Windows
   dependsOn: Build
   pool:
     vmImage: win1803
   steps:
-  - task: DownloadPipelineArtifact@0
+  - task: DownloadBuildArtifacts@0
     inputs:
+      buildType: current
+      downloadType: single
       artifactName: mp3-parser
-      targetPath: $(System.DefaultWorkingDirectory)\pkg
+      downloadPath: $(System.DefaultWorkingDirectory)/pkg
   - script: pkg\mp3-parser-win.exe -h
     displayName: Smoke Test
 - job: Test_Mac
@@ -44,10 +52,12 @@ jobs:
   pool:
     vmImage: macOS-10.13
   steps:
-  - task: DownloadPipelineArtifact@0
+  - task: DownloadBuildArtifacts@0
     inputs:
+      buildType: current
+      downloadType: single
       artifactName: mp3-parser
-      targetPath: $(System.DefaultWorkingDirectory)/pkg
+      downloadPath: $(System.DefaultWorkingDirectory)/pkg
   - script: |
       chmod +x pkg/mp3-parser-macos
       pkg/mp3-parser-macos -h
@@ -57,10 +67,12 @@ jobs:
   pool:
     vmImage: ubuntu-16.04
   steps:
-  - task: DownloadPipelineArtifact@0
+  - task: DownloadBuildArtifacts@0
     inputs:
+      buildType: current
+      downloadType: single
       artifactName: mp3-parser
-      targetPath: $(System.DefaultWorkingDirectory)/pkg
+      downloadPath: $(System.DefaultWorkingDirectory)/pkg
   - script: |
       chmod +x pkg/mp3-parser-linux
       pkg/mp3-parser-linux -h
