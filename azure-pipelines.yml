@@ -23,6 +23,9 @@ jobs:
   - script: |
       clojure -A:dev:compile-cljs
       npm run build
+      zip -j pkg/mp3-parser-win.zip pkg/mp3-parser-win.exe
+      chmod +x pkg/mp3-parser-macos
+      tar -czvf pkg/mp3-parser-macos.tar.gz -C pkg mp3-parser-macos
     displayName: Package
   - task: CopyFiles@2
     inputs:
