@@ -26,6 +26,8 @@ jobs:
       zip -j pkg/mp3-parser-win.zip pkg/mp3-parser-win.exe
       chmod +x pkg/mp3-parser-macos
       tar -czvf pkg/mp3-parser-macos.tar.gz -C pkg mp3-parser-macos
+      chmod +x pkg/mp3-parser-linux
+      tar -czvf pkg/mp3-parser-linux.tar.gz -C pkg mp3-parser-linux
     displayName: Package
   - task: CopyFiles@2
     inputs:
