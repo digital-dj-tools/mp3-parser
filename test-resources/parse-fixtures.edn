@@ -1,18 +1,19 @@
-; TODO 
-; 1. file without lame tag,
-; 2. file without xing tag,
-; 3. file with crc error in lame tag
-[{:file "test-resources/mp3-cbr-stereo-44100khz-192kbps.mp3"
+[{:file "test-resources/lame-mp3-cbr-stereo-44100khz-192kbps.mp3"
   :id3v2-offset 0
   :xing-tag? true
   :xing-keyword "Info"
   :lame-tag? true
   :lame-encoder "LAME3.99r"
   :lame-crc-valid? true}
- {:file "test-resources/mp3-cbr-stereo-44100khz-192kbps-id3v2.mp3"
+ {:file "test-resources/lame-mp3-cbr-stereo-44100khz-192kbps-id3v2.mp3"
   :id3v2-offset 42005
   :xing-tag? true
   :xing-keyword "Info"
   :lame-tag? true
   :lame-encoder "LAME3.99r"
-  :lame-crc-valid? true}]
+  :lame-crc-valid? true}
+ {:file "test-resources/ffmpeg-mp3-cbr-stereo-44100khz-192kbps-id3v2.mp3"
+  :id3v2-offset 42046
+  :xing-tag? true
+  :xing-keyword "Info"
+  :lame-tag? false}]
