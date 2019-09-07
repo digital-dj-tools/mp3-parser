@@ -19,7 +19,7 @@
                   :preset (o/bytes 2)
                   :music-length (o/bytes 4)
                   :music-crc (o/bytes 2)
-                  :tag-crc o/int16))
+                  :tag-crc o/uint16))
 
 (defn revision
   [rev-method]
@@ -40,11 +40,10 @@
             lame-parsed (assoc xing-parsed :lame-tag? tag?)]
         (if (not tag?)
           lame-parsed
-          (let [tag-crc-16 (:tag-crc parsed)
-                calc-crc-16 (b/crc16 (o/read buf (o/string 190) {:offset offset}))]
-            (println "tag crc-16:" tag-crc-16)
-            (println "calc crc-16:" calc-crc-16)
+          (let [tag-crc (:tag-crc parsed)
+                calc-crc (b/crc16 (o/read buf (o/bytes 190) {:offset (:id3v2-offset xing-parsed)}))]
             (assoc lame-parsed :lame
                    (assoc (:lame lame-parsed)
                           ::encoder (:encoder parsed)
-                          ::revision revision))))))))
+                          ::revision revision
+                          ::crc-valid? (= tag-crc calc-crc)))))))))
