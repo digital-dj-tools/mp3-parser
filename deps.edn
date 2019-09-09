@@ -3,6 +3,8 @@
  {org.clojure/clojure {:mvn/version "1.10.0"}
   org.clojure/clojurescript {:mvn/version "1.10.520"}
   org.clojure/tools.cli {:mvn/version "0.4.2"}
+  biscuit {:git/url "https://github.com/digital-dj-tools/biscuit.git"
+           :sha "589d64d839f57b15d7a97eb79501a6079301e4dd"}
   cljs-node-io {:mvn/version "1.1.2"}
   digital-dj-tools/utils {:git/url "https://github.com/digital-dj-tools/utils.git"
                           :sha "da1ddc3bc1e1315eb5883e90971565064a1560a1"}

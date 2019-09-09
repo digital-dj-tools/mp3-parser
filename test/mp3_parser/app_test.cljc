@@ -20,4 +20,5 @@
             (:xing-tag? fixture) (:xing-tag? parsed)
             (:xing-keyword fixture) (get-in parsed [:xing ::xing/keyword])
             (:lame-tag? fixture) (:lame-tag? parsed)
-            (:lame-encoder fixture) (get-in parsed [:lame ::lame/encoder])))))))
+            (:lame-encoder fixture) (get-in parsed [:lame ::lame/encoder])
+            (:lame-crc-valid? fixture) (get-in parsed [:lame ::lame/crc-valid?])))))))
