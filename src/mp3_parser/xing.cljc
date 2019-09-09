@@ -1,6 +1,5 @@
 (ns mp3-parser.xing
   (:require
-   [mp3-parser.id3v2 :as id3v2]
    [mp3-parser.mpeg :as mpeg]
    [octet.core :as o]))
 
@@ -18,12 +17,9 @@
   (if (not (:mpeg-valid? mpeg-parsed))
     mpeg-parsed
     (do
-      (assert (>= (o/get-capacity buf) (+
-                                        (:id3v2-offset mpeg-parsed)
-                                        frame-length))
+      (assert (>= (o/get-capacity buf) frame-length)
               (str "Buffer size " (o/get-capacity buf) " insufficient for frame length " frame-length))
-      (let [offset (+ (:id3v2-offset mpeg-parsed)
-                      (count header)
+      (let [offset (+ (count header)
                       (get-in offsets [version num-channels]))
             parsed (o/read buf spec {:offset offset})
             tag? (if (or (= (:keyword parsed) "Xing") (= (:keyword parsed) "Info")) true false)

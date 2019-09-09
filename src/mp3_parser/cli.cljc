@@ -4,8 +4,7 @@
    [clojure.string :as str]
    [clojure.tools.cli :as cli]
    [mp3-parser.app :as app]
-   [mp3-parser.error :as err]
-   #?(:clj [mp3-parser.fs :as fs]))
+   [mp3-parser.error :as err])
   #?(:cljs (:require-macros [mp3-parser.fs :as fs]))
   #?(:clj (:gen-class)))
 
@@ -64,11 +63,9 @@
    (defn process
      [arguments options]
      (try
-       (fs/with-buffered [buf (:file arguments)
-                          len (+ 524288 2881)]
-         (-> buf
-             app/parse
-             pprint))
+       (-> (:file arguments)
+           app/parse
+           pprint)
        [0 "Parsing completed"]
        (catch Throwable t (do
                             (err/write-report (err/create-report arguments options (Throwable->map t)))
@@ -78,11 +75,9 @@
    (defn process
      [arguments options]
      (try
-       (fs/with-buffered [buf (:file arguments)
-                          len (+ 524288 2881)]
-         (-> buf
-             app/parse
-             pprint))
+       (-> (:file arguments)
+           app/parse
+           pprint)
        [0 "Parsing completed"]
        (catch :default e (do
                            (err/write-report (err/create-report arguments options (err/Error->map e)))

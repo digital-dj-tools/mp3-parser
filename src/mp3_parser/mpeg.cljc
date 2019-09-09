@@ -1,6 +1,5 @@
 (ns mp3-parser.mpeg
   (:require
-   [mp3-parser.id3v2 :as id3v2]
    [mp3-parser.map :as map]
    [octet.core :as o]))
 
@@ -101,9 +100,9 @@
 
 (defn parse
   [buf id3v2-parsed]
-  (assert (>= (o/get-capacity buf) (+ (:id3v2-offset id3v2-parsed) 4))
-          (str "Buffer size " (o/get-capacity buf) " insufficient for id3v2 offset " (:id3v2-offset id3v2-parsed) " and frame header length 4"))
-  (let [header (o/read buf spec {:offset (:id3v2-offset id3v2-parsed)})
+  (assert (>= (o/get-capacity buf) 4)
+          (str "Buffer size " (o/get-capacity buf) " insufficient for frame header length 4"))
+  (let [header (o/read buf spec)
         valid? (valid? header)
         mpeg-parsed (assoc id3v2-parsed :mpeg-valid? valid?)]
     (if (not valid?)
