@@ -11,20 +11,24 @@
    [octet.core :as o])
   #?(:cljs (:require-macros [mp3-parser.fs :as fs])))
 
+(def id3v2-header-size 10)
+
+(def max-frame-size 2881)
+
 (defn parse
   [fname]
   (fs/with-open-sync [f #?(:clj (nio/channel (io/file fname))
                            :cljs (.openSync node-fs fname "r"))]
-    (let [id3v2-buf (o/allocate 10)]
+    (let [id3v2-buf (o/allocate id3v2-header-size)]
       (do
         #?(:clj (.read f id3v2-buf)
-           :cljs (.readSync node-fs f id3v2-buf 0 10 nil))
+           :cljs (.readSync node-fs f id3v2-buf 0 id3v2-header-size nil))
         (let [id3v2-parsed (id3v2/parse id3v2-buf)
               id3v2-offset (:id3v2-offset id3v2-parsed)
-              buf (o/allocate 2881)]
+              buf (o/allocate max-frame-size)]
           (do
             #?(:clj (.read f buf id3v2-offset)
-               :cljs (.readSync node-fs f buf 0 2881 id3v2-offset))
+               :cljs (.readSync node-fs f buf 0 max-frame-size id3v2-offset))
             (->> id3v2-parsed
                  (mpeg/parse buf)
                  (xing/parse buf)
