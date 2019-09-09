@@ -1,5 +1,6 @@
 (ns mp3-parser.lame
   (:require
+   [biscuit.core :as b]
    [mp3-parser.mpeg :as mpeg]
    [mp3-parser.xing :as xing]
    [octet.core :as o]))
@@ -17,7 +18,7 @@
                   :preset (o/bytes 2)
                   :music-length (o/bytes 4)
                   :music-crc (o/bytes 2)
-                  :tag-crc (o/bytes 2)))
+                  :tag-crc o/uint16))
 
 (defn revision
   [rev-method]
@@ -37,7 +38,10 @@
             lame-parsed (assoc xing-parsed :lame-tag? tag?)]
         (if (not tag?)
           lame-parsed
-          (assoc lame-parsed :lame
-                 (assoc (:lame lame-parsed)
-                        ::encoder (:encoder parsed)
-                        ::revision revision)))))))
+          (let [tag-crc (:tag-crc parsed)
+                calc-crc (b/crc16 (o/read buf (o/bytes 190)))]
+            (assoc lame-parsed :lame
+                   (assoc (:lame lame-parsed)
+                          ::encoder (:encoder parsed)
+                          ::revision revision
+                          ::crc-valid? (= tag-crc calc-crc)))))))))
