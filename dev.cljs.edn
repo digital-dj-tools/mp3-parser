@@ -1,0 +1,2 @@
+{:main mp3-parser.app
+ :target :nodejs}

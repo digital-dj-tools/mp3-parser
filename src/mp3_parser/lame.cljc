@@ -32,7 +32,8 @@
               (str "Buffer size " (o/get-capacity buf) " insufficient for frame length " frame-length))
       (let [parsed (o/read buf spec {:offset (+ offset 120)})
             revision (revision (:rev-method parsed))
-            tag? (if (or (= revision 0) (= revision 1) (= revision 15)) true false)
+            tag? (if (and (re-matches #"LAME.*" (:encoder parsed)) 
+                          (or (= revision 0) (= revision 1) (= revision 15))) true false)
             lame-parsed (assoc xing-parsed :lame-tag? tag?)]
         (if (not tag?)
           lame-parsed
