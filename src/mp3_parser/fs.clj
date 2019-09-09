@@ -1,33 +1,19 @@
 (ns mp3-parser.fs
-  (:require
-   [clojure.java.io :as io]
-   [net.cgrand.macrovich :as m]
-   [nio.core :as nio]
-   [octet.core :as o]))
+  (:require [net.cgrand.macrovich :as m]))
 
-; TODO async version w/core async
-(defmacro with-buffered
-  "bindings => [buf-name file len-name len]"
+(defmacro with-open-sync
+  "bindings => [name init]"
   [bindings & body]
-  (let [buf-name (first bindings)
-        f (second bindings)
-        len-name (get bindings 2)
-        length (get bindings 3)]
+  (let [name (first bindings)
+        init (second bindings)]
     `(m/case
       :clj
-       (let [~len-name ~length
-             ~buf-name (o/allocate ~len-name)]
-         (with-open [ch# (nio/channel (io/file ~f))]
-         ; TODO handle file doesn't exist, empty, invalid
-           (.read ch# ~buf-name)
-           ~@body))
+       (with-open [~name ~init]
+         ~@body)
        :cljs
-       (let [~len-name ~length
-             ~buf-name (o/allocate ~len-name)
-             fs# (js/require "fs")
-             fd# (.openSync fs# ~f "r")]
+       (let [~name ~init
+             fs# (js/require "fs")]
          (try
-           (.readSync fs# fd# ~buf-name 0 ~len-name nil)
            ~@body
            (finally
-             (.closeSync fs# fd#)))))))
+             (.closeSync fs# ~name)))))))
