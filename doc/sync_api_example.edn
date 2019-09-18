@@ -1,0 +1,18 @@
+{:id3v2-offset 42005
+ :mpeg-valid? true
+ :mpeg {:mp3-parser.mpeg/bit-rate 192000
+        :mp3-parser.mpeg/frame-length 626.0
+        :mp3-parser.mpeg/has-padding? false
+        :mp3-parser.mpeg/header [-1 -5 -80 100]
+        :mp3-parser.mpeg/layer 3
+        :mp3-parser.mpeg/num-channels 2
+        :mp3-parser.mpeg/num-samples 1152
+        :mp3-parser.mpeg/sample-rate 44100
+        :mp3-parser.mpeg/version 1}
+ :xing-tag? true
+ :xing {:mp3-parser.xing/keyword "Info", 
+        :mp3-parser.xing/offset 36}
+ :lame-tag? true
+ :lame {:mp3-parser.lame/crc-valid? true 
+        :mp3-parser.lame/encoder "LAME3.99r", 
+        :mp3-parser.lame/revision 0}}
