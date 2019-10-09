@@ -1,30 +1,30 @@
 {:paths ["src"]
  :deps
- {org.clojure/clojure {:mvn/version "1.10.0"}
+ {org.clojure/clojure {:mvn/version "1.10.1"}
   org.clojure/clojurescript {:mvn/version "1.10.520"}
   org.clojure/tools.cli {:mvn/version "0.4.2"}
   biscuit {:git/url "https://github.com/digital-dj-tools/biscuit.git"
            :sha "589d64d839f57b15d7a97eb79501a6079301e4dd"}
   cljs-node-io {:mvn/version "1.1.2"}
   digital-dj-tools/utils {:git/url "https://github.com/digital-dj-tools/utils.git"
-                          :sha "da1ddc3bc1e1315eb5883e90971565064a1560a1"}
+                          :sha "a6e97edb71bdba724779c5118811a3cc56d6c877"}
   funcool/octet {:mvn/version "1.1.2"}
-  metosin/spec-tools {:mvn/version "0.8.3"}
+  metosin/spec-tools {:mvn/version "0.9.3"}
   net.cgrand/macrovich {:mvn/version "0.2.1"}
   nio {:mvn/version "1.0.3"}}
  :aliases {:dev {:extra-paths ["test"]
                  :extra-deps {org.clojure/test.check {:mvn/version "0.9.0"}
-                              plumula/mimolette {:mvn/version "0.2.1"}}}
+                              plumula/mimolette {:mvn/version "0.2.1"}
+                              org.clojure/tools.namespace {:mvn/version "0.3.1"}}}
            :test {:extra-deps {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
                                                           :sha "cb96e80f6f3d3b307c59cbeb49bb0dcb3a2a780b"}}
                   :main-opts ["-m" "cognitect.test-runner"]}
-           :test-cljs {:extra-deps {olical/cljs-test-runner {:mvn/version "3.5.0"}}
+           :test-cljs {:extra-deps {olical/cljs-test-runner {:mvn/version "3.7.0"}}
                        :main-opts ["-m" "cljs-test-runner.main"]}
            :compile-cljs {:main-opts ["-m" "cljs.main" "-co" "compile-opts.edn" "-c" "mp3-parser.cli"]}
            :nrepl-server {:extra-deps {cider/cider-nrepl {:mvn/version "0.21.1"}
-                                       cider/piggieback {:mvn/version "0.4.0"}
-                                       com.bhauman/figwheel-main {:mvn/version "0.2.1"}
-                                       ^:depot/ignore org.clojure/tools.namespace {:mvn/version "0.2.11"}}
+                                       cider/piggieback {:mvn/version "0.4.1"}
+                                       com.bhauman/figwheel-main {:mvn/version "0.2.1"}}
                           :main-opts ["-m" "nrepl.cmdline"
                                       "--middleware" "[cider.nrepl/cider-middleware,cider.piggieback/wrap-cljs-repl]"]}
            :outdated {:extra-deps {olical/depot {:mvn/version "1.8.2"}}
