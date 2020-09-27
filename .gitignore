@@ -8,11 +8,11 @@ pom.xml.asc
 /checkouts/
 .cpcache/
 .cljs_node_repl
-.nrepl-port
 package-lock.json
 node_modules
-/pkg/
 /out/
 /cljs-test-runner-out/
-*.xml
-*.nml
+.nrepl-port
+.calva/
+.clj-kondo/
+/pkg/

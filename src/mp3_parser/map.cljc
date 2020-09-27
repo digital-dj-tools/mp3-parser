@@ -1,3 +1,4 @@
+#?(:clj (set! *warn-on-reflection* true))
 (ns mp3-parser.map)
 
 (defn m-assoc-in

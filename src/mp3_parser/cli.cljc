@@ -1,3 +1,4 @@
+#?(:clj (set! *warn-on-reflection* true))
 (ns mp3-parser.cli
   (:require
    #?(:cljs [cljs.nodejs :as nodejs])

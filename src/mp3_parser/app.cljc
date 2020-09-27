@@ -1,3 +1,4 @@
+#?(:clj (set! *warn-on-reflection* true))
 (ns mp3-parser.app
   (:require
    #?(:clj [clojure.java.io :as io])
@@ -9,6 +10,7 @@
    [mp3-parser.xing :as xing]
    #?(:clj [nio.core :as nio])
    [octet.core :as o])
+  #?(:clj (:import java.nio.channels.FileChannel))
   #?(:cljs (:require-macros [mp3-parser.fs :as fs])))
 
 (def id3v2-header-size 10)
@@ -27,7 +29,7 @@
               id3v2-offset (:id3v2-offset id3v2-parsed)
               buf (o/allocate max-frame-size)]
           (do
-            #?(:clj (.read f buf id3v2-offset)
+            #?(:clj (.read ^FileChannel f buf id3v2-offset)
                :cljs (.readSync node-fs f buf 0 max-frame-size id3v2-offset))
             (->> id3v2-parsed
                  (mpeg/parse buf)
