@@ -1,6 +1,6 @@
 {:paths ["src"]
  :deps
- {org.clojure/clojure {:mvn/version "1.10.2-alpha1"}
+ {org.clojure/clojure {:mvn/version "1.10.2-alpha2"}
   org.clojure/clojurescript {:mvn/version "1.10.520"}
   org.clojure/tools.cli {:mvn/version "0.4.2"}
   biscuit {:git/url "https://github.com/digital-dj-tools/biscuit.git"
@@ -14,7 +14,7 @@
   net.cgrand/macrovich {:mvn/version "0.2.1"}
   nio {:mvn/version "1.0.3"}}
  :aliases {:dev {:extra-paths ["test"]
-                 :extra-deps {org.clojure/test.check {:mvn/version "0.9.0"}
+                 :extra-deps {org.clojure/test.check {:mvn/version "0.10.0"}
                               plumula/mimolette {:mvn/version "0.2.1"}
                               org.clojure/tools.namespace {:mvn/version "0.3.1"}}}
            :test {:extra-deps {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
@@ -31,8 +31,7 @@
                                       "--graalvm-opt"
                                       "-report-unsupported-elements-at-runtime"
                                       "--graalvm-opt"
-                                      "J-Xmx4g"]
-                          :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}
+                                      "J-Xmx4g"]}
            :test-cljs {:extra-deps {olical/cljs-test-runner {:mvn/version "3.7.0"}}
                        :main-opts ["-m" "cljs-test-runner.main"]}
            :compile-cljs {:main-opts ["-m" "cljs.main" "-co" "compile-opts.edn" "-c" "mp3-parser.cli"]}
