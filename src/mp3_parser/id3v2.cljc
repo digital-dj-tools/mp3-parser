@@ -1,3 +1,4 @@
+#?(:clj (set! *warn-on-reflection* true))
 (ns mp3-parser.id3v2
   (:require [octet.core :as o]))
 

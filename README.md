@@ -1,4 +1,4 @@
-# mp3-parser [![Build Status](https://dev.azure.com/digital-dj-tools/mp3-parser/_apis/build/status/digital-dj-tools.mp3-parser?branchName=master)](https://dev.azure.com/digital-dj-tools/mp3-parser/_build/latest?definitionId=5&branchName=master)
+# mp3-parser ![Build](https://github.com/digital-dj-tools/mp3-parser/workflows/Build/badge.svg)
 
 A library for parsing headers of mp3 files, including MPEG header frame data and any Xing/Lame tags.
 

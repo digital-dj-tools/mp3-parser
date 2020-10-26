@@ -1,3 +1,4 @@
+#?(:clj (set! *warn-on-reflection* true))
 (ns mp3-parser.mpeg
   (:require
    [mp3-parser.map :as map]

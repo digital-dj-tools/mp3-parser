@@ -1,0 +1,140 @@
+name: "Build"
+on: [push, workflow_dispatch]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+      - name: "Setup Java"
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: "Setup Clojure"
+        uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: "1.10.1.697"
+      - name: "Clojure Tests"
+        run: clojure -A:dev:test
+      - name: "Install Node Dependencies"
+        run: npm install
+      - name: "ClojureScript Tests"
+        run: clojure -A:dev:test-cljs
+  uberjar:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+      - name: "Setup Java"
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: "Setup Clojure"
+        uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: "1.10.1.697"
+      - name: "Uberjar"
+        run: clojure -A:uberjar
+      - name: "Smoke Test"
+        run: |
+          java -jar target/mp3-parser-SNAPSHOT-standalone.jar -h
+      - name: "Upload"
+        uses: actions/upload-artifact@v2
+        with:
+          name: mp3-parser-standalone
+          path: target/mp3-parser-SNAPSHOT-standalone.jar
+  native-image-linux:
+    needs: [uberjar]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+      - name: "Setup GraalVM"
+        uses: DeLaGuardo/setup-graalvm@3
+        with:
+          graalvm-version: "20.2.0.java11"
+      - name: "Install GraalVM Native Image Deps"
+        run: |
+          sudo apt -y update
+          sudo apt -y install gcc libc6-dev zlib1g-dev libstdc++-8-dev
+      - name: "Install GraalVM Native Image"
+        run: gu install native-image
+      - name: "Download"
+        uses: actions/download-artifact@v2
+        with:
+          name: mp3-parser-standalone
+      - name: "Native Image"
+        run: native-image --verbose --no-server --no-fallback --allow-incomplete-classpath --report-unsupported-elements-at-runtime --initialize-at-build-time -J-Xmx8g -jar mp3-parser-SNAPSHOT-standalone.jar -H:Name=mp3-parser
+      - name: "Smoke Test"
+        run: |
+          chmod +x mp3-parser
+          ./mp3-parser -h
+      - name: "Package"
+        run: tar -czvf mp3-parser-linux.tar.gz mp3-parser
+      - name: "Upload"
+        uses: actions/upload-artifact@v2
+        with:
+          name: mp3-parser-linux
+          path: mp3-parser-linux.tar.gz
+  native-image-windows:
+    needs: [uberjar]
+    runs-on: windows-latest
+    steps:
+      - name: "Setup GraalVM"
+        uses: DeLaGuardo/setup-graalvm@3
+        with:
+          graalvm-version: "20.2.0.java11"
+      - name: "Install GraalVM Native Image"
+        run: C:\hostedtoolcache\windows\GraalVM\20.2.0-java11\x64\bin\gu install native-image
+      - name: "Install Visual C Build Tools Workload for Visual Studio 2017"
+        run: choco install visualstudio2017-workload-vctools
+      - name: "Download"
+        uses: actions/download-artifact@v2
+        with:
+          name: mp3-parser-standalone
+      - name: "Native Image"
+        shell: cmd
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+          C:\hostedtoolcache\windows\GraalVM\20.2.0-java11\x64\bin\native-image --verbose --no-server --no-fallback --allow-incomplete-classpath --report-unsupported-elements-at-runtime --initialize-at-build-time -J-Xmx8g -jar mp3-parser-SNAPSHOT-standalone.jar -H:Name=mp3-parser
+      - name: "Smoke Test"
+        shell: cmd
+        run: mp3-parser.exe -h
+      - name: "Package"
+        run: 7z a mp3-parser-win.zip mp3-parser.exe
+      - name: "Upload"
+        uses: actions/upload-artifact@v2
+        with:
+          name: mp3-parser-win
+          path: mp3-parser-win.zip
+  native-image-mac:
+    needs: [uberjar]
+    runs-on: macos-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+      - name: "Setup GraalVM"
+        uses: DeLaGuardo/setup-graalvm@3
+        with:
+          graalvm-version: "20.2.0.java11"
+      - name: "Install GraalVM Native Image"
+        run: gu install native-image
+      - name: "Download"
+        uses: actions/download-artifact@v2
+        with:
+          name: mp3-parser-standalone
+      - name: "Native Image"
+        run: native-image --verbose --no-server --no-fallback --allow-incomplete-classpath --report-unsupported-elements-at-runtime --initialize-at-build-time -J-Xmx8g -jar mp3-parser-SNAPSHOT-standalone.jar -H:Name=mp3-parser
+      - name: "Smoke Test"
+        run: |
+          chmod +x mp3-parser
+          ./mp3-parser -h
+      - name: "Package"
+        run: tar -czvf mp3-parser-macos.tar.gz mp3-parser
+      - name: "Upload"
+        uses: actions/upload-artifact@v2
+        with:
+          name: mp3-parser-macos
+          path: mp3-parser-macos.tar.gz

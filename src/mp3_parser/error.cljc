@@ -1,3 +1,4 @@
+#?(:clj (set! *warn-on-reflection* true))
 (ns mp3-parser.error
   (:require
    #?(:clj [clojure.java.io :as io] :cljs [cljs-node-io.core :as io :refer [slurp spit]])

@@ -1,3 +1,4 @@
+#?(:clj (set! *warn-on-reflection* true))
 (ns mp3-parser.xing
   (:require
    [mp3-parser.mpeg :as mpeg]
