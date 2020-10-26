@@ -2,6 +2,7 @@
 (ns mp3-parser.cli
   (:require
    #?(:cljs [cljs.nodejs :as nodejs])
+   #?(:clj [clojure.data.json :as json])
    [clojure.string :as str]
    [clojure.tools.cli :as cli]
    [mp3-parser.app :as app]
@@ -57,7 +58,7 @@
 ; TODO move to utils/json
 (defn pprint
   [x]
-  #?(:clj (clojure.data.json/pprint x)
+  #?(:clj (json/pprint x)
      :cljs (.log js/console (js/JSON.stringify (clj->js x) nil 1))))
 
 #?(:clj
