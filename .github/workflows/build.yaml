@@ -16,6 +16,10 @@ jobs:
           cli: "1.10.1.697"
       - name: "Clojure Tests"
         run: clojure -A:dev:test
+      - name: "Install Node Dependencies"
+        run: npm install
+      - name: "ClojureScript Tests"
+        run: clojure -A:dev:test-cljs
       - name: "Uberjar"
         run: clojure -A:uberjar
       - name: "Smoke Test"
