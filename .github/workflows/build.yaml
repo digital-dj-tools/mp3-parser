@@ -1,7 +1,7 @@
 name: "Build"
 on: [push, workflow_dispatch]
 jobs:
-  uberjar:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
@@ -20,6 +20,20 @@ jobs:
         run: npm install
       - name: "ClojureScript Tests"
         run: clojure -A:dev:test-cljs
+  uberjar:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+      - name: "Setup Java"
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: "Setup Clojure"
+        uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: "1.10.1.697"
       - name: "Uberjar"
         run: clojure -A:uberjar
       - name: "Smoke Test"
