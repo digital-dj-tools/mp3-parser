@@ -21,7 +21,8 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"betterthantomorrow.calva"
+				"betterthantomorrow.calva",
+				"GitHub.vscode-github-actions"
 			]
 		}
 	}

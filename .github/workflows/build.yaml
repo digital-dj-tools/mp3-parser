@@ -41,7 +41,7 @@ jobs:
         run: |
           java -jar target/mp3-parser-SNAPSHOT-standalone.jar -h
       - name: "Upload"
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: mp3-parser-standalone
           path: target/mp3-parser-SNAPSHOT-standalone.jar
@@ -74,7 +74,7 @@ jobs:
       - name: "Package"
         run: tar -czvf mp3-parser-linux.tar.gz mp3-parser
       - name: "Upload"
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: mp3-parser-linux
           path: mp3-parser-linux.tar.gz
@@ -105,7 +105,7 @@ jobs:
       - name: "Package"
         run: 7z a mp3-parser-win.zip mp3-parser.exe
       - name: "Upload"
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: mp3-parser-win
           path: mp3-parser-win.zip
@@ -134,7 +134,7 @@ jobs:
       - name: "Package"
         run: tar -czvf mp3-parser-macos.tar.gz mp3-parser
       - name: "Upload"
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: mp3-parser-macos
           path: mp3-parser-macos.tar.gz
