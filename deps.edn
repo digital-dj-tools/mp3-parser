@@ -4,16 +4,16 @@
   org.clojure/clojurescript {:mvn/version "1.10.773"}
   org.clojure/data.json {:mvn/version "1.0.0"}
   org.clojure/tools.cli {:mvn/version "0.4.2"}
-  biscuit {:git/url "https://github.com/digital-dj-tools/biscuit.git"
+  biscuit/biscuit {:git/url "https://github.com/digital-dj-tools/biscuit.git"
            :sha "589d64d839f57b15d7a97eb79501a6079301e4dd"}
-  cljs-node-io {:mvn/version "1.1.2"}
+  cljs-node-io/cljs-node-io {:mvn/version "1.1.2"}
   digital-dj-tools/utils {:git/url "https://github.com/digital-dj-tools/utils.git"
                           :sha "a6e97edb71bdba724779c5118811a3cc56d6c877"}
   funcool/octet {:git/url "https://github.com/digital-dj-tools/octet.git"
                  :sha "1f5dedc7254cc75956033c4071ce4ffc1b199ead"}
   metosin/spec-tools {:mvn/version "0.10.0"}
   net.cgrand/macrovich {:mvn/version "0.2.1"}
-  nio {:mvn/version "1.0.3"}}
+  nio/nio {:mvn/version "1.0.3"}}
  :aliases {:dev {:extra-paths ["test"]
                  :extra-deps {org.clojure/test.check {:mvn/version "0.10.0"}
                               plumula/mimolette {:mvn/version "0.2.1"}
